@@ -58,6 +58,7 @@
   --cream:#FFFFFF; --sand:#F7FAFC; --linen:#E4EDF4; --card:#FFFFFF;
   --amber:#023E63; --amber-h:#012C48; --ink:#023E63; --ink2:#515B61;
   --azul-2:#075A87;   /* azul secundario: o italico da hero */
+  --cta:#913832; --cta-h:#742C27;   /* botoes cheios, no vermelho da logo */
   --red:#913832;      /* vermelho da flor da logo, so em detalhes */
   --line:rgba(2,62,99,.14);
   --navy:#FFFFFF; --navy-rgb:255,255,255;
@@ -100,8 +101,8 @@ h3{font-size:clamp(1.15rem,2.1vw,1.4rem)}
 .btn svg{width:19px;height:19px;flex:none;transition:transform .25s var(--ease)}
 .btn:hover{transform:translateY(-2px)}
 .btn:active{transform:translateY(0)}
-.btn--amber{background:var(--amber);color:#FFFFFF;box-shadow:0 12px 26px -12px rgba(2,42,68,.2)}
-.btn--amber:hover{background:var(--amber-h);box-shadow:0 16px 30px -12px rgba(2,42,68,.26)}
+.btn--amber{background:var(--cta);color:#FFFFFF;box-shadow:0 12px 26px -12px rgba(145,56,50,.26)}
+.btn--amber:hover{background:var(--cta-h);box-shadow:0 16px 30px -12px rgba(145,56,50,.32)}
 .btn--amber:hover svg{transform:translateX(3px)}
 /* secundário: contorno oliva, para não ficar igual ao primário ao lado dele */
 .btn--green{background:transparent;border-color:var(--g800);color:var(--g800)}
@@ -196,9 +197,9 @@ body.menu-open .mnav li:nth-child(5) a{transition-delay:.36s}
 .hero-lead{margin:clamp(18px,2.6vh,30px) 0 clamp(24px,3.4vh,38px);max-width:552px;
   color:var(--ink2);font-size:clamp(1rem,1.1vw,1.16rem);line-height:1.65}
 .hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
-.btn--claro{background:var(--g800);color:var(--cream);border-color:var(--g800)}
-.btn--claro:hover{background:var(--g700);border-color:var(--g700);
-  box-shadow:0 14px 30px -14px rgba(2,42,68,.34)}
+.btn--claro{background:var(--cta);color:var(--cream);border-color:var(--cta)}
+.btn--claro:hover{background:var(--cta-h);border-color:var(--cta-h);
+  box-shadow:0 14px 30px -14px rgba(145,56,50,.34)}
 .btn--claro:hover svg{transform:translateX(4px)}
 /* entrada encenada */
 .ha{opacity:0;transform:translateY(18px);
