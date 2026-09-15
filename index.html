@@ -236,7 +236,7 @@ body.menu-open .mnav li:nth-child(5) a{transition-delay:.36s}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;flex-wrap:wrap;margin-bottom:clamp(30px,4vw,52px)}
 .sec-head p{color:var(--ink2);max-width:44ch}
 /* reveal */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
 .reveal.in{opacity:1;transform:none}
 /* entrada de cada página: fade curto, com um passo de subida nas páginas
    internas. Na home fica só o fade, para não somar ao stagger da hero */
@@ -718,7 +718,12 @@ function srcsetOf(n){ return `img/${n}-800.webp 800w, img/${n}-1080.webp 1080w` 
 function imgTag(im, opts){
   opts = opts || {};
   const sizes = opts.sizes || '(max-width:860px) 92vw, 46vw';
-  const load = opts.eager ? 'fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
+  /* eager: imagem principal da rota, prioridade alta.
+     cedo: sai da fila do lazy mas sem roubar prioridade à hero.
+     por omissão: lazy. */
+  const load = opts.eager ? 'fetchpriority="high" decoding="async"'
+             : opts.cedo  ? 'decoding="async"'
+             : 'loading="lazy" decoding="async"';
   return `<picture>
     <source type="image/webp" srcset="${srcsetOf(im.n)}" sizes="${sizes}">
     <img src="img/${im.n}.jpg" alt="${im.alt}" width="${im.w||1080}" height="${im.h||1350}" ${load}>
@@ -789,9 +794,13 @@ const app = document.getElementById('main');
 function secProducts(){
   const spans=['w5','','w3','','w5','w3','','w3','w5'];
   const size = {w5:5, w3:3, '':4};
+  /* cada tile revela-se por si: em coluna no telemóvel isto faz as fotos
+     aparecerem à medida que se rola, em vez de o mosaico inteiro esperar
+     por estar 12% visível e depois surgirem várias de uma vez.
+     As duas primeiras carregam já, porque ficam logo a seguir à hero */
   const tiles = PRODUCTS.map((p,i)=>`
-    <a class="tile ${spans[i]||''}" href="#/produtos/${p.slug}" style="grid-column:span ${size[spans[i]||'']}">
-      <div class="imgbox">${imgTag(productImages(p)[0], {sizes:'(max-width:860px) 92vw, 38vw'})}</div>
+    <a class="tile reveal ${spans[i]||''}" href="#/produtos/${p.slug}" style="grid-column:span ${size[spans[i]||'']}">
+      <div class="imgbox">${imgTag(productImages(p)[0], {sizes:'(max-width:860px) 92vw, 38vw', cedo:i<3})}</div>
       <div class="tile-info">
         <div><span class="mm">${p.mm} de altura de fio</span><h3>${p.short}</h3></div>
         <span class="tile-price">${p.price}</span>
@@ -803,7 +812,7 @@ function secProducts(){
       <div><p class="eyebrow">Catálogo</p><h2 style="margin-top:10px">Conheça os nossos produtos</h2></div>
       <a class="btn btn--outline" href="#/produtos">Ver catálogo completo ${I.arrow}</a>
     </div>
-    <div class="mosaic reveal">${tiles}</div>
+    <div class="mosaic">${tiles}</div>
   </div></section>`;
 }
 
@@ -1324,11 +1333,15 @@ function initReveal(){
     let i = 0;
     es.forEach(e=>{
       if(!e.isIntersecting) return;
-      e.target.style.transitionDelay = (Math.min(i++, 4) * 75) + 'ms';
+      e.target.style.transitionDelay = (Math.min(i++, 3) * 55) + 'ms';
       e.target.classList.add('in');
       io.unobserve(e.target);
     });
-  }, {threshold:.12, rootMargin:'0px 0px -6% 0px'});
+  /* dispara 18% de ecrã ANTES de o elemento entrar: a animação acaba
+     quando ele chega à vista, em vez de começar já com ele no meio do ecrã.
+     threshold 0 porque blocos altos (o mosaico no telemóvel) nunca chegavam
+     a ter 12% visíveis sem se rolar meio ecrã a mais */
+  }, {threshold:0, rootMargin:'0px 0px 18% 0px'});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 }
 
