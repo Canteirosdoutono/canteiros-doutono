@@ -682,7 +682,14 @@ const IMGS = {
   ['jardim-piscina','relvado num jardim amplo junto a uma piscina'],
   ['tango-1','pormenor dos fios em close-up'],
   ['tango-2','amostra vista de lado'],
-  ['tango-3','superfície vista de cima']]
+  ['tango-3','superfície vista de cima']],
+/* a VICTORIA so tem fotografias de estudio do fabricante; nao ha nenhuma
+   do produto aplicado num jardim, por isso a capa e a textura vista de cima */
+'victoria':[
+  ['victoria-1','superfície da relva vista de cima'],
+  ['victoria-2','amostra vista em ângulo, com a base à vista'],
+  ['victoria-3','amostra vista de lado, a mostrar a altura do fio'],
+  ['victoria-fibras','esquema das fibras: filamentos retos e fibra encaracolada']]
 };
 
 const PRODUCTS = [
@@ -717,6 +724,16 @@ const PRODUCTS = [
 { slug:'sidalvia-40mm', short:'Sidalvia', name:'Relva artificial SIDALVIA 40 mm',
   price:'15 €/m²', priceNum:'15', mm:'40 mm',
   desc:[`Este modelo de alta qualidade para clientes com um gosto sofisticado baseia-se no conceito do modelo CAPRI, ou seja, modelos altamente decorativos acessíveis a todos os orçamentos. A relva artificial SIDALVIA eleva este conceito de alta qualidade a preços justos a um nível completamente novo, pois esta relva de 40 mm de altura possui um tratamento mate especial, uma densidade de 17 850 pontos/m² e um peso de fibra de quase 1 800 gr/m².`] },
+{ slug:'victoria', short:'Victoria', name:'Relva artificial VICTORIA',
+  price:'23 €/m²', priceNum:'23',
+  /* o fabricante nao indica altura de fio: a etiqueta usa o peso da fibra,
+     que e o dado tecnico que existe. Sem mm nao entra nos filtros de altura. */
+  etiqueta:'+ de 2.000 gr/m²',
+  /* so no catalogo: as capas da pagina inicial sao todas fotografias de
+     relvado aplicado e uma foto de estudio partia a harmonia do mosaico */
+  soCatalogo:true,
+  desc:[`A VICTORIA é o modelo mais avançado do catálogo. Combina três tipos de fibra: filamentos retos de secção “helix”, que recuperam a forma depois de pisados; uma fibra multidirecional semi-texturizada, que quebra o alinhamento e dá realismo; e uma fibra encaracolada de alto calibre, que enche a base.`,
+  `Deste conjunto resulta uma superfície com textura muito próxima da relva natural e preparada para passagem intensa. Tem mais de 2.000 gr/m² de fibra. Peça o orçamento pelo WhatsApp e indicamos a quantidade certa para a sua área.`] },
 { slug:'tango-40mm', short:'Tango', name:'Relva artificial TANGO 40 mm',
   price:'12 €/m²', priceNum:'12', mm:'40 mm',
   desc:[`A relva artificial TANGO é feita de fio côncavo em “C” com um tratamento fosco de maciez extraordinária e toque natural.`,
@@ -819,18 +836,23 @@ entrega:`Depois de concluída a encomenda, receberá via e-mail o prazo de entre
    ══════════════════════════════════════════════════════════════ */
 const app = document.getElementById('main');
 
+/* a etiqueta do cartao: altura de fio quando existe, senao o que o produto
+   tiver declarado em `etiqueta`. Nunca inventa um valor que nao veio da ficha. */
+const etiquetaDe = p => p.etiqueta || (p.mm + ' de altura de fio');
+
 function secProducts(){
   const spans=['w5','','w3','','w5','w3','','w3','w5'];
+  const naHome = PRODUCTS.filter(p=>!p.soCatalogo);
   const size = {w5:5, w3:3, '':4};
   /* cada tile revela-se por si: em coluna no telemóvel isto faz as fotos
      aparecerem à medida que se rola, em vez de o mosaico inteiro esperar
      por estar 12% visível e depois surgirem várias de uma vez.
      As duas primeiras carregam já, porque ficam logo a seguir à hero */
-  const tiles = PRODUCTS.map((p,i)=>`
+  const tiles = naHome.map((p,i)=>`
     <a class="tile reveal ${spans[i]||''}" href="#/produtos/${p.slug}" style="grid-column:span ${size[spans[i]||'']}">
       <div class="imgbox">${imgTag(productImages(p)[0], {sizes:'(max-width:860px) 92vw, 38vw', cedo:i<3})}</div>
       <div class="tile-info">
-        <div><span class="mm">${p.mm} de altura de fio</span><h3>${p.short}</h3></div>
+        <div><span class="mm">${etiquetaDe(p)}</span><h3>${p.short}</h3></div>
         <span class="tile-price">${p.price}</span>
       </div>
     </a>`).join('');
@@ -914,7 +936,7 @@ function renderCatalog(){
   <section class="wrap page-hero">
     <p class="eyebrow">Produtos</p>
     <h1 style="margin-top:12px">Relva artificial para cada tipo de espaço</h1>
-    <p>Explore os nove modelos do nosso catálogo e compare altura de fio, densidade e preço. Todos os produtos funcionam por pedido de orçamento.</p>
+    <p>Explore os dez modelos do nosso catálogo e compare altura de fio, densidade e preço. Todos os produtos funcionam por pedido de orçamento.</p>
   </section>
   <section class="wrap" style="padding-bottom:clamp(64px,9vw,110px)">
     <div class="filters" role="group" aria-label="Filtrar produtos por altura de fio">
@@ -931,7 +953,7 @@ function renderCatalog(){
       <article class="pcard ${i%2?'flip':''}">
         <a class="imgbox" href="#/produtos/${p.slug}" aria-label="Ver ${p.name}">${imgTag(productImages(p)[0],{sizes:'(max-width:720px) 92vw, 46vw'})}</a>
         <div class="pcard-body">
-          <span class="chip">${p.mm} de altura de fio</span>
+          <span class="chip">${etiquetaDe(p)}</span>
           <h2>Relva artificial ${p.short}</h2>
           <p class="pcard-price">${p.price}</p>
           <p class="pcard-desc">${p.desc[0]}</p>
@@ -954,7 +976,7 @@ function renderCatalog(){
 /* ── Página de produto + galeria ── */
 function renderProduct(p){
   const imgs = productImages(p);
-  const others = PRODUCTS.filter(x=>x.slug!==p.slug).slice(0,3);
+  const others = PRODUCTS.filter(x=>x.slug!==p.slug && !x.soCatalogo).slice(0,3);
   app.innerHTML = `
   <div class="wrap">
     <nav class="crumbs" aria-label="Localização"><a href="#/">Início</a> › <a href="#/produtos">Produtos</a> › <span aria-current="page">${p.name}</span></nav>
@@ -971,7 +993,7 @@ function renderProduct(p){
         </div>
       </div>
       <div class="prod-info">
-        <span class="chip">${p.mm} de altura de fio</span>
+        <span class="chip">${etiquetaDe(p)}</span>
         <h1 style="margin-top:14px">${p.name}</h1>
         <p class="prod-price">${p.price} <small>por pedido de orçamento</small></p>
         <div class="prod-ctas">
@@ -995,7 +1017,7 @@ function renderProduct(p){
         const oi = productImages(o);
         return `<a class="tile" href="#/produtos/${o.slug}" style="grid-column:span 4">
           <div class="imgbox">${imgTag(oi[0],{sizes:'(max-width:860px) 92vw, 30vw'})}</div>
-          <div class="tile-info"><div><span class="mm">${o.mm}</span><h3>${o.short}</h3></div><span class="tile-price">${o.price}</span></div>
+          <div class="tile-info"><div><span class="mm">${o.etiqueta || o.mm}</span><h3>${o.short}</h3></div><span class="tile-price">${o.price}</span></div>
         </a>`}).join('')}
       </div>
     </section>
@@ -1308,7 +1330,7 @@ function route(){
         [ORG_LD,{"@context":"https://schema.org","@type":"WebSite","name":"Canteiros D'Outono"}]);
       break;
     case 'produtos': renderCatalog();
-      setMeta("Produtos | Canteiros D'Outono","Catálogo de relva artificial: 9 modelos, de 35 a 50 mm de altura de fio. Preços por m² e pedido de orçamento por WhatsApp.",ORG_LD);
+      setMeta("Produtos | Canteiros D'Outono","Catálogo de relva artificial: 10 modelos, de 35 a 50 mm de altura de fio. Preços por m² e pedido de orçamento por WhatsApp.",ORG_LD);
       break;
     case 'quem-somos': renderQuemSomos();
       setMeta("Quem Somos | Canteiros D'Outono","A história da Canteiros D'Outono: fabricantes de relva natural e artificial em Portugal, desde 2020.",ORG_LD);
