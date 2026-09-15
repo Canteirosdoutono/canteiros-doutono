@@ -39,6 +39,11 @@
 <meta property="og:title" content="Canteiros D'Outono | Relva natural e artificial em Portugal">
 <meta property="og:description" content="Soluções de relva natural e artificial com qualidade, durabilidade e acabamento cuidado. Peça já o seu orçamento gratuito.">
 <meta property="og:image" content="img/hero-jardim.jpg">
+<!-- og:url e canonical ficam vazios de propósito: o setMeta() preenche-os em
+     cada rota a partir do endereço onde o site estiver alojado, por isso
+     passam sozinhos a apontar para o domínio definitivo -->
+<meta property="og:url" content="">
+<link rel="canonical" href="">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -860,7 +865,7 @@ function renderHome(){
     <div><p class="eyebrow">Orçamento gratuito</p>
     <h2>Comece hoje a dar vida ao jardim que <em>sempre quis</em>.</h2></div>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
-      <a class="btn btn--amber" href="#" data-wa-general>${I.wa} Solicite Orçamento</a>
+      <a class="btn btn--amber" href="#" data-wa-general>${I.wa} Pedir orçamento</a>
     </div>
   </div></section>`;
   bindWA(app);
@@ -895,7 +900,7 @@ function renderCatalog(){
           <p class="pcard-desc">${p.desc[0]}</p>
           <div class="pcard-ctas">
             <a class="btn btn--green" href="#/produtos/${p.slug}">Ver detalhes ${I.arrow}</a>
-            <a class="btn btn--amber" href="#" data-wa-product="${p.slug}">${I.wa} Solicite Orçamento</a>
+            <a class="btn btn--amber" href="#" data-wa-product="${p.slug}">${I.wa} Pedir orçamento</a>
           </div>
         </div>
       </article>`).join('');
@@ -933,7 +938,7 @@ function renderProduct(p){
         <h1 style="margin-top:14px">${p.name}</h1>
         <p class="prod-price">${p.price} <small>por pedido de orçamento</small></p>
         <div class="prod-ctas">
-          <a class="btn btn--amber" href="#" data-wa-product="${p.slug}">${I.wa} Solicite Orçamento</a>
+          <a class="btn btn--amber" href="#" data-wa-product="${p.slug}">${I.wa} Pedir orçamento</a>
           <a class="btn btn--outline" href="#/produtos">Voltar ao catálogo</a>
         </div>
         <div class="delivery">
@@ -1072,7 +1077,7 @@ function renderPrazos(){
   <section class="wrap prose" style="padding-bottom:clamp(64px,9vw,110px)">
     <div class="panel">${T.prazos.map((t,i)=>`<p style="${i===T.prazos.length-1?'margin:0':''}">${t}</p>`).join('')}</div>
     <div class="panel" style="margin-top:18px"><p style="margin:0">${T.entrega}</p></div>
-    <a class="btn btn--amber" href="#" data-wa-general style="margin-top:26px">${I.wa} Solicite Orçamento</a>
+    <a class="btn btn--amber" href="#" data-wa-general style="margin-top:26px">${I.wa} Pedir orçamento</a>
   </section>`;
   bindWA(app);
 }
@@ -1109,7 +1114,7 @@ function renderFAQ(){
         <div class="faq-a" id="fa-${i}" role="region" aria-labelledby="fq-${i}"><div><p>${a}</p></div></div>
       </div>`).join('')}
     </div>
-    <a class="btn btn--amber" href="#" data-wa-general style="margin-top:30px">${I.wa} Falar no WhatsApp</a>
+    <a class="btn btn--amber" href="#" data-wa-general style="margin-top:30px">${I.wa} Pedir orçamento</a>
   </section>`;
   app.querySelectorAll('.faq-q').forEach(b=>b.addEventListener('click',()=>{
     const it=b.closest('.faq-item'), open=it.classList.toggle('open');
@@ -1131,7 +1136,7 @@ function renderManutencao(){
       <li>${I.check}<span>Evitar objetos cortantes ou fontes de calor diretamente sobre a relva.</span></li>
     </ul>
     <p>Com cuidados simples, a relva mantém a sua qualidade e beleza por muitos anos.</p>
-    <a class="btn btn--amber" href="#" data-wa-general style="margin-top:14px">${I.wa} Solicite Orçamento</a>
+    <a class="btn btn--amber" href="#" data-wa-general style="margin-top:14px">${I.wa} Pedir orçamento</a>
   </section>`;
   bindWA(app);
 }
@@ -1196,7 +1201,7 @@ function render404(){
         <a class="btn btn--outline" href="#/produtos">Produtos</a>
         <a class="btn btn--outline" href="#/quem-somos">Quem somos</a>
         <a class="btn btn--outline" href="#contactos" data-rodape>Contactos</a>
-        <a class="btn btn--amber" href="#" data-wa-general>${I.wa} Falar no WhatsApp</a>
+        <a class="btn btn--amber" href="#" data-wa-general>${I.wa} Pedir orçamento</a>
       </div>
     </div>
   </section>`;
@@ -1206,15 +1211,41 @@ function render404(){
 /* ══════════════════════════════════════════════════════════════
    ROUTER + metadados + dados estruturados
    ══════════════════════════════════════════════════════════════ */
+/* Raiz do site, lida do próprio endereço: numa pré-visualização dá
+   https://.../canteiros-doutono/ e no domínio final dá https://dominio.pt/.
+   Nada aqui precisa de ser editado quando o domínio mudar. */
+const BASE = location.origin + location.pathname.replace(/[^/]*$/, '');
+const abs = u => /^https?:/.test(u) ? u : BASE + u.replace(/^\//, '');
+
+/* Transforma qualquer "image", "logo" ou "url" do JSON-LD em endereço
+   absoluto, que é o que o Google exige nos dados estruturados */
+function ldAbsoluto(o){
+  const c = JSON.parse(JSON.stringify(o || {}));
+  ['image','logo','url'].forEach(k=>{
+    if(typeof c[k] === 'string') c[k] = abs(c[k]);
+    else if(Array.isArray(c[k])) c[k] = c[k].map(abs);
+  });
+  return c;
+}
+
 function setMeta(title, desc, jsonld){
   document.title = title;
   const md = document.querySelector('meta[name="description"]');
   md.setAttribute('content', desc);
   document.querySelector('meta[property="og:title"]').setAttribute('content', title);
   document.querySelector('meta[property="og:description"]').setAttribute('content', desc);
-  document.getElementById('ldjson').textContent = JSON.stringify(jsonld||{});
+  const url = BASE + location.hash;
+  document.querySelector('meta[property="og:url"]').setAttribute('content', url);
+  document.querySelector('link[rel="canonical"]').setAttribute('href', url);
+  document.querySelector('meta[property="og:image"]').setAttribute('content', abs('img/hero-jardim.jpg'));
+  const ld = ldAbsoluto(jsonld);
+  if(!ld.url) ld.url = url;
+  document.getElementById('ldjson').textContent = JSON.stringify(ld);
 }
+/* "url" e "logo" vão vazios/relativos: o ldAbsoluto() torna-os absolutos a
+   partir do BASE, por isso acompanham o domínio sozinhos */
 const ORG_LD = {"@context":"https://schema.org","@type":"Organization","name":"Canteiros D'Outono",
+  "url":"","logo":"img/logo.png",
   "email":"canteirosdoutono@gmail.com","telephone":"+351925486057","areaServed":"PT","foundingDate":"2020",
   "contactPoint":{"@type":"ContactPoint","telephone":"+351925486057","contactType":"customer service","areaServed":"PT"}};
 
