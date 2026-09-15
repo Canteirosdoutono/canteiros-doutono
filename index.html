@@ -304,11 +304,22 @@ body.menu-open .mnav li:nth-child(5) a{transition-delay:.36s}
   .about-fim{order:3}}
 
 /* ── Diferencial (home) ─────────────────────────────── */
-.diff{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(34px,5vw,64px)}
+.diff{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(34px,5vw,64px);
+  position:relative;overflow:hidden}
+/* marca de agua: o simbolo reduzido da logo, como num papel timbrado.
+   Fica encostado a direita e cortado pelo canto arredondado do cartao.
+   A 5% nao disputa leitura nenhuma; foi medido contra o texto por cima. */
+.diff::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  right:clamp(-70px,-4vw,-30px);top:50%;transform:translateY(-50%);
+  width:min(420px,36%);aspect-ratio:460/467;
+  background:url(img/marca.png) center/contain no-repeat;opacity:.055}
+/* no telemovel o cartao e estreito e a marca ficaria por baixo do texto */
+@media(max-width:900px){.diff::before{display:none}}
+.diff-lead,.diff-fim{position:relative;z-index:1}
 .diff-lead{font-family:var(--ff-d);font-weight:500;font-size:clamp(1.05rem,1.7vw,1.28rem);color:var(--ink);
   line-height:1.5;max-width:56ch;text-wrap:pretty;margin-bottom:clamp(20px,3vw,34px)}
 .diff-row{display:grid;grid-template-columns:260px 1fr;gap:22px 44px;padding:26px 0;border-top:1px solid var(--line);
-  position:relative;transition:background-color .4s var(--ease)}
+  position:relative;z-index:1;transition:background-color .4s var(--ease)}
 /* o filete vermelho da flor da logo desenha-se por cima do risco cinzento
    que ja la estava: acrescenta cor sem deslocar uma unica letra */
 .diff-row::after{content:"";position:absolute;left:0;top:-1px;width:100%;height:1px;
@@ -539,6 +550,7 @@ body.lb-open .wa-float,body.menu-open .wa-float{opacity:0;pointer-events:none}
       <a href="#/" data-nav="home">Início</a>
       <a href="#/produtos" data-nav="produtos">Produtos</a>
       <a href="#/quem-somos" data-nav="quem-somos">Quem somos</a>
+      <a href="#contactos" data-rodape>Contactos</a>
     </nav>
     <button class="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mnav">
       <span></span><span></span><span></span>
@@ -551,7 +563,8 @@ body.lb-open .wa-float,body.menu-open .wa-float{opacity:0;pointer-events:none}
     <li><a href="#/">Início <i>01</i></a></li>
     <li><a href="#/produtos">Produtos <i>02</i></a></li>
     <li><a href="#/quem-somos">Quem somos <i>03</i></a></li>
-    <li><a href="#" data-wa-general>Pedir orçamento <i>04</i></a></li>
+    <li><a href="#contactos" data-rodape>Contactos <i>04</i></a></li>
+    <li><a href="#" data-wa-general>Pedir orçamento <i>05</i></a></li>
   </ul>
   <div class="mnav-foot">
     Telefone / WhatsApp: +351 925 486 057<br>
@@ -562,7 +575,7 @@ body.lb-open .wa-float,body.menu-open .wa-float{opacity:0;pointer-events:none}
 
 <main id="main" tabindex="-1"></main>
 
-<footer id="contactos">
+<footer id="contactos" style="scroll-margin-top:var(--nav-h)">
   <div class="wrap">
     <div class="ft-grid">
       <div class="ft-brand">
@@ -798,7 +811,7 @@ prazos:[`Os prazos de entrega e de instalação variam consoante a dimensão do 
 `Depois de aprovado o orçamento, a nossa equipa indica-lhe o prazo previsto para a execução do serviço. Procuramos assegurar rapidez, organização e qualidade em cada fase do trabalho.`],
 privacidade:[`A Canteiros D'Outono respeita a privacidade dos seus clientes e protege todos os dados pessoais fornecidos através do site.`,
 `As informações recolhidas são utilizadas apenas para contacto, orçamentos e melhoria dos nossos serviços, nunca sendo partilhadas com terceiros sem autorização, salvo obrigação legal.`],
-entrega:`Depois de concluída a encomenda, receberá via e-mail o prazo de entrega e o valor final com o transporte (caso pretenda).`
+entrega:`Depois de concluída a encomenda, receberá via e-mail o prazo de entrega e o valor final, já com os portes incluídos, caso pretenda o envio.`
 };
 
 /* ══════════════════════════════════════════════════════════════
@@ -1118,10 +1131,10 @@ function renderPrivacidade(){
 
 function renderFAQ(){
   const faqs=[
-    ['A relva artificial precisa de manutenção?','Sim, mas a manutenção é simples. Recomenda-se limpeza periódica e escovagem para manter a aparência natural.'],
+    ['A relva artificial precisa de manutenção?','Sim, mas é simples. Basta uma limpeza periódica e uma escovagem para manter o aspeto natural.'],
     ['A relva artificial pode ficar ao sol?','Sim. Os nossos produtos são resistentes aos raios UV e preparados para diferentes condições climáticas.'],
-    ['Qual a durabilidade da relva?','A durabilidade varia conforme o uso e manutenção, podendo ultrapassar muitos anos em excelente estado.'],
-    ['Fazem instalação?','Sim, realizamos instalação profissional para garantir melhor acabamento e durabilidade.'],
+    ['Qual a durabilidade da relva?','A durabilidade varia consoante o uso e a manutenção e, com os cuidados indicados, mantém-se em bom estado durante muitos anos.'],
+    ['Fazem instalação?','Sim, fazemos a instalação para garantir o melhor acabamento e maior durabilidade.'],
     ['Fazem orçamento?','Sim. Pode pedir o seu orçamento pelo WhatsApp ou pelos contactos do rodapé.']
   ];
   app.innerHTML = `<section class="wrap page-hero">
@@ -1155,11 +1168,11 @@ function renderManutencao(){
     <p>Para manter a relva artificial sempre bonita e duradoura, recomendamos:</p>
     <ul class="checks">
       <li>${I.check}<span>Remover folhas e resíduos regularmente;</span></li>
-      <li>${I.check}<span>Lavar ocasionalmente com água;</span></li>
+      <li>${I.check}<span>Lavar com água de vez em quando;</span></li>
       <li>${I.check}<span>Escovar as fibras para manter o aspeto natural;</span></li>
       <li>${I.check}<span>Evitar objetos cortantes ou fontes de calor diretamente sobre a relva.</span></li>
     </ul>
-    <p>Com cuidados simples, a relva mantém a sua qualidade e beleza por muitos anos.</p>
+    <p>Com cuidados simples, a relva mantém a qualidade e a beleza durante muitos anos.</p>
     <a class="btn btn--amber" href="#" data-wa-general style="margin-top:14px">${I.wa} Pedir orçamento</a>
   </section>`;
   bindWA(app);
