@@ -309,14 +309,19 @@ body.menu-open .mnav li:nth-child(5) a{transition-delay:.36s}
 /* marca de agua: o simbolo reduzido da logo, como num papel timbrado.
    Fica encostado a direita e cortado pelo canto arredondado do cartao.
    A 5% nao disputa leitura nenhuma; foi medido contra o texto por cima. */
+/* assinatura institucional: o simbolo reduzido no canto superior direito,
+   a cores e em tamanho pequeno. Substitui a marca de agua grande que aqui
+   estava; sem moldura, sem fundo, sem sombra. */
 .diff::before{content:"";position:absolute;z-index:0;pointer-events:none;
-  /* o simbolo aparece inteiro: a altura e que manda, para nunca bater no
-     topo nem no fundo do cartao, e a largura sai da propria proporcao */
-  right:clamp(16px,3%,46px);top:50%;transform:translateY(-50%);
-  height:min(66%,420px);aspect-ratio:640/651;
-  background:url(img/marca.png) center/contain no-repeat;opacity:.062}
-/* no telemovel o cartao e estreito e a marca ficaria por baixo do texto */
-@media(max-width:900px){.diff::before{display:none}}
+  right:clamp(24px,4vw,56px);top:clamp(26px,3.6vw,46px);
+  width:clamp(58px,6vw,78px);aspect-ratio:640/651;
+  background:url(img/marca.png) center/contain no-repeat}
+/* abaixo dos 700px o cartao e estreito e a assinatura cairia por cima
+   da primeira linha do texto de abertura */
+@media(max-width:700px){.diff::before{display:none}}
+/* microdetalhe de identidade: um traco curto no vermelho da flor da logo */
+.diff-lead::after{content:"";display:block;width:50px;height:3px;
+  background:var(--red);margin-top:clamp(18px,2.4vw,26px)}
 .diff-lead,.diff-fim{position:relative;z-index:1}
 .diff-lead{font-family:var(--ff-d);font-weight:500;font-size:clamp(1.05rem,1.7vw,1.28rem);color:var(--ink);
   line-height:1.5;max-width:56ch;text-wrap:pretty;margin-bottom:clamp(20px,3vw,34px)}
