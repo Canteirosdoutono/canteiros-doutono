@@ -310,9 +310,11 @@ body.menu-open .mnav li:nth-child(5) a{transition-delay:.36s}
    Fica encostado a direita e cortado pelo canto arredondado do cartao.
    A 5% nao disputa leitura nenhuma; foi medido contra o texto por cima. */
 .diff::before{content:"";position:absolute;z-index:0;pointer-events:none;
-  right:clamp(-70px,-4vw,-30px);top:50%;transform:translateY(-50%);
-  width:min(420px,36%);aspect-ratio:460/467;
-  background:url(img/marca.png) center/contain no-repeat;opacity:.055}
+  /* sangra generosa: cerca de um quarto do simbolo passa a margem direita,
+     o suficiente para o corte se ler como intencao e nao como acidente */
+  right:-11%;top:50%;transform:translateY(-50%);
+  width:min(560px,48%);aspect-ratio:640/651;
+  background:url(img/marca.png) center/contain no-repeat;opacity:.045}
 /* no telemovel o cartao e estreito e a marca ficaria por baixo do texto */
 @media(max-width:900px){.diff::before{display:none}}
 .diff-lead,.diff-fim{position:relative;z-index:1}
@@ -500,8 +502,26 @@ footer{background:var(--sand);color:var(--ink2);border-top:1px solid var(--linen
 .horario>div{display:flex;flex-direction:column;gap:2px}
 .horario dt{color:var(--ink);font-weight:600}
 .horario dd{color:var(--ink2);margin:0;font-variant-numeric:tabular-nums}
+/* faixa de selos: redes, Uniao Europeia e Livro de Reclamacoes */
+.ft-selos{border-top:1px solid var(--linen);padding:24px 0;display:flex;align-items:center;
+  gap:clamp(20px,4vw,52px);flex-wrap:wrap}
+.selo-redes{display:flex;gap:10px}
+.selo-redes a{width:38px;height:38px;border:1px solid var(--line);border-radius:11px;
+  display:grid;place-items:center;color:var(--ink);
+  transition:color .25s var(--ease),border-color .25s var(--ease),transform .25s var(--ease)}
+.selo-redes a:hover{color:var(--red);border-color:var(--red);transform:translateY(-2px)}
+.selo-redes svg{width:19px;height:19px}
+.selo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;
+  color:var(--ink2);font-size:.86rem;font-weight:500;transition:color .25s var(--ease)}
+.selo:hover{color:var(--ink)}
+.selo svg{width:19px;height:19px;flex:none}
+.bandeira{display:block;width:34px;flex:none;line-height:0}
+.bandeira svg{width:34px;height:auto;border-radius:2px;display:block}
 .ft-bar{border-top:1px solid var(--linen);padding:22px 0;display:flex;justify-content:space-between;
   gap:14px;flex-wrap:wrap;font-size:.84rem}
+.ft-autoria a{color:var(--ink);font-weight:600;text-decoration:none}
+.ft-autoria a:hover{color:var(--red)}
+@media(max-width:560px){.ft-selos{gap:18px}}
 @media(max-width:900px){.ft-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.ft-grid{grid-template-columns:1fr}}
 
@@ -613,8 +633,28 @@ body.lb-open .wa-float,body.menu-open .wa-float{opacity:0;pointer-events:none}
         <div><dt>Domingo</dt><dd>Encerrado</dd></div>
       </dl>
     </div>
+    <div class="ft-selos">
+      <div class="selo-redes">
+        <a href="https://www.instagram.com/canteiros_doutono/" target="_blank" rel="noopener" aria-label="Instagram da Canteiros D'Outono">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg>
+        </a>
+        <a href="https://www.facebook.com/CanteirosdOutono/" target="_blank" rel="noopener" aria-label="Facebook da Canteiros D'Outono">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6A22 22 0 0 0 14.3 3.5c-2.4 0-4 1.45-4 4.1v2.3H7.6V13h2.7v8z"/></svg>
+        </a>
+      </div>
+      <a class="selo" href="https://european-union.europa.eu/index_pt" target="_blank" rel="noopener">
+        <span class="bandeira"><svg viewBox="0 0 300 200" role="img" aria-label="Bandeira da União Europeia"><rect width="300" height="200" fill="#003399"/><g fill="#FFCC00"><polygon points="150.00,22.22 152.49,29.90 160.57,29.90 154.04,34.64 156.53,42.32 150.00,37.58 143.47,42.32 145.96,34.64 139.43,29.90 147.51,29.90"/><polygon points="183.33,31.15 185.83,38.83 193.90,38.83 187.37,43.58 189.86,51.25 183.33,46.51 176.80,51.25 179.30,43.58 172.77,38.83 180.84,38.83"/><polygon points="207.74,55.56 210.23,63.23 218.30,63.23 211.77,67.98 214.27,75.66 207.74,70.91 201.20,75.66 203.70,67.98 197.17,63.23 205.24,63.23"/><polygon points="216.67,88.89 219.16,96.57 227.23,96.57 220.70,101.31 223.20,108.99 216.67,104.24 210.14,108.99 212.63,101.31 206.10,96.57 214.17,96.57"/><polygon points="207.74,122.22 210.23,129.90 218.30,129.90 211.77,134.64 214.27,142.32 207.74,137.58 201.20,142.32 203.70,134.64 197.17,129.90 205.24,129.90"/><polygon points="183.33,146.62 185.83,154.30 193.90,154.30 187.37,159.05 189.86,166.72 183.33,161.98 176.80,166.72 179.30,159.05 172.77,154.30 180.84,154.30"/><polygon points="150.00,155.56 152.49,163.23 160.57,163.23 154.04,167.98 156.53,175.66 150.00,170.91 143.47,175.66 145.96,167.98 139.43,163.23 147.51,163.23"/><polygon points="116.67,146.62 119.16,154.30 127.23,154.30 120.70,159.05 123.20,166.72 116.67,161.98 110.14,166.72 112.63,159.05 106.10,154.30 114.17,154.30"/><polygon points="92.26,122.22 94.76,129.90 102.83,129.90 96.30,134.64 98.80,142.32 92.26,137.58 85.73,142.32 88.23,134.64 81.70,129.90 89.77,129.90"/><polygon points="83.33,88.89 85.83,96.57 93.90,96.57 87.37,101.31 89.86,108.99 83.33,104.24 76.80,108.99 79.30,101.31 72.77,96.57 80.84,96.57"/><polygon points="92.26,55.56 94.76,63.23 102.83,63.23 96.30,67.98 98.80,75.66 92.26,70.91 85.73,75.66 88.23,67.98 81.70,63.23 89.77,63.23"/><polygon points="116.67,31.15 119.16,38.83 127.23,38.83 120.70,43.58 123.20,51.25 116.67,46.51 110.14,51.25 112.63,43.58 106.10,38.83 114.17,38.83"/></g></svg></span>
+        <span>União Europeia</span>
+      </a>
+      <a class="selo" href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 8h5M9 12h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span>Livro de Reclamações</span>
+      </a>
+    </div>
     <div class="ft-bar">
       <span>© <span id="year"></span> Canteiros D'Outono</span>
+      <span class="ft-autoria">Design e desenvolvimento:
+        <a href="https://www.instagram.com/ogrupocado/" target="_blank" rel="noopener">Grupo Cado</a></span>
     </div>
   </div>
 </footer>
