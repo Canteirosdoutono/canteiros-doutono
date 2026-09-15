@@ -236,7 +236,7 @@ body.menu-open .mnav li:nth-child(5) a{transition-delay:.36s}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;flex-wrap:wrap;margin-bottom:clamp(30px,4vw,52px)}
 .sec-head p{color:var(--ink2);max-width:44ch}
 /* reveal */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s var(--ease),transform .55s var(--ease)}
 .reveal.in{opacity:1;transform:none}
 /* entrada de cada página: fade curto, com um passo de subida nas páginas
    internas. Na home fica só o fade, para não somar ao stagger da hero */
@@ -1333,7 +1333,10 @@ let io, porRevelar = [];
    scroll e revela tudo o que já devia estar visível. */
 function varrerReveal(){
   if(!porRevelar.length) return;
-  const limite = window.innerHeight * 1.18;
+  /* meio ecrã, não a base: em scroll normal o observador dispara muito antes
+     de aqui se chegar, por isso a rede não lhe rouba a animação. Só apanha o
+     que ficou mesmo para trás */
+  const limite = window.innerHeight * 0.5;
   porRevelar = porRevelar.filter(el=>{
     if(el.getBoundingClientRect().top > limite) return true;
     el.classList.add('in');
@@ -1353,11 +1356,13 @@ function initReveal(){
       io.unobserve(e.target);
       porRevelar = porRevelar.filter(x=>x!==e.target);
     });
-  /* dispara 18% de ecrã ANTES de o elemento entrar: a animação acaba
-     quando ele chega à vista, em vez de começar já com ele no meio do ecrã.
-     threshold 0 porque blocos altos (o mosaico no telemóvel) nunca chegavam
-     a ter 12% visíveis sem se rolar meio ecrã a mais */
-  }, {threshold:0, rootMargin:'0px 0px 18% 0px'});
+  /* margem zero e threshold 0: arranca no instante em que o topo do bloco
+     toca a base do ecrã, por isso a animação corre à vista de quem rola.
+     Antecipar (a margem de 18% que aqui esteve) fazia-a acabar antes de o
+     bloco aparecer, e o efeito perdia-se. O threshold também tem de ser 0:
+     com 12%, blocos altos como o mosaico no telemóvel só disparavam depois
+     de se rolar meio ecrã a mais. */
+  }, {threshold:0, rootMargin:'0px'});
   /* sem varrer aqui: deixa-se a primeira leva ao observador, que é quem
      aplica a cascata. A varredura só entra depois, nos scrolls */
   porRevelar = [...document.querySelectorAll('.reveal')];
