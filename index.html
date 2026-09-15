@@ -1325,7 +1325,21 @@ function route(){
 window.addEventListener('hashchange', route);
 
 /* ── Reveal on scroll ── */
-let io;
+let io, porRevelar = [];
+/* Rede de segurança: num scroll muito rápido (um flick no telemóvel, um salto
+   programático) um bloco pode passar entre dois frames sem o observador o
+   apanhar, e ficaria invisível para sempre. Isto varre o que falta a cada
+   scroll e revela tudo o que já devia estar visível. */
+function varrerReveal(){
+  if(!porRevelar.length) return;
+  const limite = window.innerHeight * 1.18;
+  porRevelar = porRevelar.filter(el=>{
+    if(el.getBoundingClientRect().top > limite) return true;
+    el.classList.add('in');
+    io && io.unobserve(el);
+    return false;
+  });
+}
 function initReveal(){
   io && io.disconnect();
   io = new IntersectionObserver(es=>{
@@ -1336,13 +1350,17 @@ function initReveal(){
       e.target.style.transitionDelay = (Math.min(i++, 3) * 55) + 'ms';
       e.target.classList.add('in');
       io.unobserve(e.target);
+      porRevelar = porRevelar.filter(x=>x!==e.target);
     });
   /* dispara 18% de ecrã ANTES de o elemento entrar: a animação acaba
      quando ele chega à vista, em vez de começar já com ele no meio do ecrã.
      threshold 0 porque blocos altos (o mosaico no telemóvel) nunca chegavam
      a ter 12% visíveis sem se rolar meio ecrã a mais */
   }, {threshold:0, rootMargin:'0px 0px 18% 0px'});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  /* sem varrer aqui: deixa-se a primeira leva ao observador, que é quem
+     aplica a cascata. A varredura só entra depois, nos scrolls */
+  porRevelar = [...document.querySelectorAll('.reveal')];
+  porRevelar.forEach(el=>io.observe(el));
 }
 
 /* ── Header: a placa de vidro converte-se na barra creme ao longo da hero.
@@ -1359,6 +1377,7 @@ function aoRolar(){
   }
   document.documentElement.style.setProperty('--hp', p.toFixed(4));
   document.body.classList.toggle('scrolled', p>0.5);
+  varrerReveal();
 }
 function medirHero(){
   heroEl = document.querySelector('.hero');
