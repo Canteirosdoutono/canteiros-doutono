@@ -315,7 +315,9 @@ body.menu-open .mnav li:nth-child(5) a{transition-delay:.36s}
 .cta-in h2 em{font-style:italic;color:var(--g800);font-weight:600}
 
 /* ── Catálogo ───────────────────────────────────────── */
-.page-hero{padding:clamp(120px,15vh,160px) 0 clamp(34px,5vw,54px)}
+/* padding-block, nunca o atalho: o atalho punha os lados a 0 e anulava
+   os 24px do .wrap, colando o texto à borda no telemóvel */
+.page-hero{padding-block:clamp(120px,15vh,160px) clamp(34px,5vw,54px)}
 .page-hero p{margin-top:14px;color:var(--ink2);max-width:60ch}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:36px}
 .filters button{border:1.5px solid var(--g800);background:transparent;color:var(--g800);border-radius:999px;
